@@ -1,0 +1,13 @@
+---
+import type { MasteringWork } from '../data/mastering';
+import MediaEmbed from './MediaEmbed.astro';
+interface Props { entry: MasteringWork }
+const { entry } = Astro.props;
+const base = import.meta.env.BASE_URL;
+---
+<article class="mastering-release" id={`mastering-${entry.id}`} aria-label={`${entry.artist} — ${entry.title}`}>
+  {entry.audio && <div class:list={['mastering-player', entry.audio.kind === 'embed' && entry.audio.provider === 'spotify' && entry.audio.url.includes('/album/') && 'mastering-player-album']}>
+    {entry.audio.kind === 'file' ? <audio controls preload="none" src={base + entry.audio.src} aria-label={`Listen to ${entry.artist} — ${entry.title}`}></audio> : <MediaEmbed provider={entry.audio.provider} url={entry.audio.url} title={`Listen to ${entry.artist} — ${entry.title}`} loading="eager"/>}
+  </div>}
+  {entry.credit && <p class="mastering-credit">{entry.credit}</p>}
+</article>

@@ -1,0 +1,10 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { email, configuredUrl, PERSONAL_INSTAGRAM_URL, PERSONAL_LINKEDIN_URL, PERSONAL_GITHUB_URL } from '../data/links';
+const profiles = [
+  { label: 'Instagram', url: configuredUrl(PERSONAL_INSTAGRAM_URL) },
+  { label: 'LinkedIn', url: configuredUrl(PERSONAL_LINKEDIN_URL) },
+  { label: 'GitHub', url: configuredUrl(PERSONAL_GITHUB_URL) },
+].filter(profile => profile.url);
+---
+<Layout title="Contact"><section class="wrap page-intro contact-page"><span class="eyebrow">Open to the next collaboration</span><h1>Let’s find<br/>a shared <em>frequency.</em></h1><p>For music-industry opportunities, mastering projects and creative collaborations.</p><dl class="contact-list"><div><dt>Email</dt><dd>{email ? <a href={`mailto:${email}`}>{email} ↗</a> : 'Email contact is being updated.'}</dd></div>{profiles.map(profile => <div><dt>{profile.label}</dt><dd><a href={profile.url} target="_blank" rel="noopener noreferrer">Visit profile ↗</a></dd></div>)}</dl><span class="eyebrow">Based in Toronto, Canada</span></section></Layout>

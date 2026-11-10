@@ -1,0 +1,23 @@
+---
+import SocialLinks from './SocialLinks.astro';
+import { projectSocials } from '../data/links';
+import { projectHref, type ProjectPreview } from '../utils/projects';
+interface Props { project: ProjectPreview; showIndex?: boolean; summary?: string }
+const { project, showIndex = true, summary = project.data.summary } = Astro.props;
+const p = project.data;
+const base = import.meta.env.BASE_URL;
+const graphicLabel = p.number === 4 ? 'SOUND / SPACE' : p.number === 3 ? 'SIGNAL / STAGE' : 'AUDIO / INSIGHT';
+---
+<article class:list={['project-card', !p.image && 'graphic-card', `project-${p.number}`]}>
+<a class="project-main-link" href={projectHref(project)}>
+  <div class="card-art">
+    {p.image ? <img src={base + p.image} alt={p.alt || ''} loading="lazy" width="1200" height="900"/> : <div class="research-art" aria-hidden="true"><span class="graphic-label">{graphicLabel}</span><div class="signal-lines"></div><span class="graphic-footnote">{p.number === 3 ? 'Studio & live operations' : 'Research notebook'} / RC</span></div>}
+    {showIndex && <span class="card-index" aria-hidden="true">0{p.number}</span>}<span class="card-arrow" aria-hidden="true">↗</span>
+  </div>
+  <div class="card-meta"><span>{p.category}</span><span>{p.year || 'Selected experience'}</span></div>
+  <div class="card-title-row"><h3>{p.title}</h3><span aria-hidden="true">↗</span></div>
+  <p>{summary}</p>
+  <span class="card-role">{p.role}</span>
+</a>
+<SocialLinks links={projectSocials(project.id)} label={`${p.title} official profiles`}/>
+</article>

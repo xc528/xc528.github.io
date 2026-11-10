@@ -1,0 +1,52 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import RecordGallery from '../components/RecordGallery.astro';
+import SocialLinks from '../components/SocialLinks.astro';
+import { personalSocials } from '../data/links';
+import { technicalOverview } from '../data/featured';
+import { isTechnical } from '../utils/projects';
+import { getCollection } from 'astro:content';
+const projects = (await getCollection('projects')).sort((a, b) => a.data.number - b.data.number);
+const selected = [...projects.filter(project => !isTechnical(project)), technicalOverview];
+// Homepage-only captions; Work and individual project content stay unchanged.
+const homeSummaries: Record<string, string> = {
+  'hang-him-to-the-scales': 'Chinese musical elements meet indie, dreampop and shoegaze.',
+  'studio-live-av': 'Supporting recording sessions and live audiovisual production.',
+};
+const base = import.meta.env.BASE_URL;
+---
+<Layout>
+  <section class="cover wrap" aria-labelledby="cover-title">
+    <div class="cover-dateline eyebrow" style="justify-content: flex-end;"><span>Toronto / New York</span></div>
+    <div class="cover-composition">
+      <h1 id="cover-title" class="cover-name"><span>RHAN</span><span>CHEN<span class="cover-asterisk" aria-hidden="true">✳</span></span></h1>
+      <figure class="cover-photo cover-photo-main">
+        <img src={`${base}images/pipa-monochrome.jpg`} alt="Black-and-white photograph of a seated pipa player." width="1067" height="1600" fetchpriority="high"/>
+      </figure>
+      <figure class="cover-photo cover-photo-cut">
+        <img src={`${base}images/band-red-stage.jpg`} alt="A band performing in a room filled with red stage light." width="1200" height="800"/>
+      </figure>
+      <span class="cover-side-note eyebrow">Strings / Signals / Shared spaces</span>
+      <div class="cover-caption"><span class="eyebrow">Music Technology · Mastering · Creative Production</span><p>Musician. Mastering engineer.<br/>A creative practice between<br/>the stage and the signal.</p><a class="text-link" href="#selected-work">Enter the collection <span aria-hidden="true">↘</span></a></div>
+      <div class="hero-social"><SocialLinks links={personalSocials} label="Personal contact" showUnavailable/></div>
+      <span class="cover-mark" aria-hidden="true">RC /<br/>VOL. 01</span>
+    </div>
+    <div class="cover-bottom"><h2>MUSIC, SOUND &<br/><span>EVERYTHING IN BETWEEN.</span></h2><span class="cover-scroll eyebrow">Scroll to explore ↓</span></div>
+  </section>
+
+  <RecordGallery/>
+
+  <section class="section wrap selected-section" id="selected-work">
+    <div class="section-heading"><div><span class="eyebrow">Index 01—04 / Music · Production · Technology</span><h2>SELECTED<br/><em>frequencies.</em></h2></div><a class="text-link" href={`${base}work/`}>All projects <span aria-hidden="true">↗</span></a></div>
+    <div class="project-grid editorial-grid">{selected.map(project => <ProjectCard project={project} showIndex={false} summary={homeSummaries[project.id]}/>)}</div>
+  </section>
+
+
+  <section class="section wrap about-preview">
+    <div class="about-kicker eyebrow">The person behind the practice / Xinran Chen</div>
+    <figure class="about-preview-photo"><img src={`${base}images/pipa-amber.jpg`} alt="Close-up of hands playing a pipa in warm light." width="1600" height="1600" loading="lazy"/></figure>
+    <h2>A MUSICIAN’S EAR.<br/>A PRODUCER’S<br/><em>instinct.</em><br/>A TECHNICAL MIND.</h2>
+    <div class="about-preview-copy"><p>I’m Rhan (Xinran) Chen, based in Toronto. My work moves between mastering, pipa and bass performance, concert production and audio research.</p><p>Music Technology and Computer Science at NYU brought these threads together. Curiosity keeps them moving.</p><a class="text-link" href={`${base}about/`}>More about Rhan <span aria-hidden="true">↗</span></a></div>
+  </section>
+</Layout>

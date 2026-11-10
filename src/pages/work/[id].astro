@@ -1,0 +1,33 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import SocialLinks from '../../components/SocialLinks.astro';
+import { projectSocials } from '../../data/links';
+import { isTechnical } from '../../utils/projects';
+import MediaEmbed from '../../components/MediaEmbed.astro';
+import { getCollection, render } from 'astro:content';
+export async function getStaticPaths() {
+  return (await getCollection('projects')).filter(project => !isTechnical(project)).map(project => ({ params: { id: project.id }, props: { project } }));
+}
+const { project } = Astro.props;
+const p = project.data;
+const showPhotoCaptions = !['chinese-traditional-music-club', 'hang-him-to-the-scales'].includes(project.id);
+const { Content } = await render(project);
+const base = import.meta.env.BASE_URL;
+---
+<Layout title={p.title} description={p.summary} image={p.image}>
+  <article class:list={['wrap case-study', !p.image && 'case-typographic']}>
+    <div class="case-topline"><a class="text-link" href={`${base}work/`}>← Back to collection</a><span class="eyebrow">Project dossier / 0{p.number}</span></div>
+    <header class="case-heading">
+      <span class="eyebrow">{p.category}</span><h1>{p.title}</h1>
+      <div class="case-intro"><p class="case-summary">{p.summary}</p><dl class="case-meta"><div><dt>My role</dt><dd>{p.role}</dd></div>{p.year && <div><dt>Year</dt><dd>{p.year}</dd></div>}</dl></div>
+    <SocialLinks links={projectSocials(project.id)} label={`${p.title} official profiles`}/>
+    </header>
+    {p.image ? <figure class="case-lead-image"><img class="case-hero" src={base + p.image} alt={p.alt || ''} width="1600" height="1067"/>{showPhotoCaptions && <figcaption class="eyebrow">0{p.number} / {p.category} / Photographic archive</figcaption>}</figure> : <div class="case-type-banner" aria-hidden="true"><span>{p.number === 3 ? 'BEHIND THE SOUND.' : 'LISTEN. QUESTION. REPEAT.'}</span><span>RC / 0{p.number}</span></div>}
+    <div class="case-story"><aside class="case-margin"><span class="eyebrow">The notes</span><span class="margin-number" aria-hidden="true">0{p.number}</span></aside><div class="prose"><Content/></div></div>
+    {p.release?.artwork && <figure class="case-cover-art"><img src={base + p.release.artwork} alt={p.release.artworkAlt || 'Album cover artwork'} width="800" height="800" loading="lazy"/></figure>}
+    {p.embeds.length > 0 && <section class="case-media" aria-label="Listen and watch"><h2>Press play.</h2>{p.embeds.map(embed => <MediaEmbed {...embed}/>)}</section>}
+    {p.gallery.length > 0 && <div class="case-gallery">{p.gallery.map((image, i) => <figure><img src={base + image.src} alt={image.alt} loading="lazy" width="1200" height="900"/>{showPhotoCaptions && <figcaption class="eyebrow">Frame / 0{i + 1}</figcaption>}</figure>)}</div>}
+    {p.links.length > 0 && <div class="case-links">{p.links.map(link => <a class="text-link" href={link.url} target="_blank" rel="noopener noreferrer">{link.label} ↗</a>)}</div>}
+    <a class="case-return" href={`${base}work/`}>BACK TO THE INDEX <span aria-hidden="true">↗</span></a>
+  </article>
+</Layout>

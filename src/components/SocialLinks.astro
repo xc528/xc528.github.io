@@ -1,0 +1,19 @@
+---
+import type { SocialLink } from '../data/links';
+interface Props { links: SocialLink[]; label: string; showUnavailable?: boolean }
+const { links, label, showUnavailable = false } = Astro.props;
+const visibleLinks = links.filter(link => link.href || showUnavailable);
+const paths = {
+  instagram: 'M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm5 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm6-1h.01',
+  email: 'M3 4h18v16H3V4Zm0 1 9 8 9-8',
+  youtube: 'M21 7s-.2-2-2-2.4C17 4.3 12 4.3 12 4.3s-5 0-7 .3C3.2 5 3 7 3 7s-.4 2.3-.4 5 .4 5 .4 5 .2 2 2 2.4c2 .3 7 .3 7 .3s5 0 7-.3c1.8-.4 2-2.4 2-2.4s.4-2.3.4-5-.4-5-.4-5ZM10 8l6 4-6 4V8Z',
+  apple: 'M9 18V5l12-3v13M9 9l12-3M9 18c0 1.7-1.6 3-3.5 3S2 20.2 2 19s1.6-3 3.5-3S9 16.5 9 18Zm12-3c0 1.7-1.6 3-3.5 3S14 17.2 14 16s1.6-3 3.5-3 3.5.5 3.5 2Z',
+  spotify: 'M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0ZM6 9c4-1.3 8-1 12 1M7 12c3.4-1 6.7-.6 10 1M8 15c2.8-.7 5.3-.4 8 1',
+};
+---
+{visibleLinks.length > 0 && <div class="social-links" role="group" aria-label={label}>
+  {visibleLinks.map(link => {
+    const Tag = link.href ? 'a' : 'span';
+    return <Tag class:list={['social-icon', !link.href && 'social-unconfigured']} href={link.href} role={link.href ? undefined : 'img'} aria-label={link.href ? link.label : `${link.label} — not yet configured`} title={link.href ? link.label : `${link.label} — not yet configured`} target={link.href && !link.href.startsWith('mailto:') ? '_blank' : undefined} rel={link.href && !link.href.startsWith('mailto:') ? 'noopener noreferrer' : undefined}><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={paths[link.icon]}/></svg></Tag>;
+  })}
+</div>}

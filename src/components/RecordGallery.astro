@@ -1,0 +1,49 @@
+---
+import { mastering } from '../data/mastering';
+import { email } from '../data/links';
+import MasteringRelease from './MasteringRelease.astro';
+const featured = mastering.filter(entry => entry.featured);
+const additional = mastering.filter(entry => !entry.featured);
+---
+<section class="record-section mastering-section" id="mastering" aria-labelledby="record-title">
+  <div class="wrap">
+    <div class="section-heading"><div><span class="eyebrow">Independent releases / The listening shelf</span><h2 id="record-title">MASTERING<br/><em>In service of the music.</em></h2></div><p class="record-instruction">Selected mastering work across<br/>independent music releases.</p></div>
+    <div class="mastering-layout">
+      <div class="mastering-list" aria-label="Selected mastering work">
+        <div class="mastering-featured">{featured.map(entry => <MasteringRelease entry={entry}/>)}</div>
+        {additional.length > 0 && <>
+          <div id="additional-mastering-works" class="mastering-additional" hidden></div>
+          <template id="additional-mastering-template">{additional.map(entry => <MasteringRelease entry={entry}/>)}</template>
+          <button class="mastering-toggle text-link" type="button" aria-expanded="false" aria-controls="additional-mastering-works" hidden>VIEW ALL WORKS +</button>
+          <noscript><p class="mastering-noscript">Additional works on Spotify: {additional.map((entry, i) => <>{i > 0 && ' · '}<a class="text-link" href={entry.releaseUrl} target="_blank" rel="noopener noreferrer">{entry.title} ↗</a></>)}</p></noscript>
+        </>}
+      </div>
+      <aside class="mastering-availability"><span class="eyebrow">Open for collaboration</span><h3>Currently accepting<br/><em>mastering projects.</em></h3><p>For mastering inquiries or collaborations, get in touch.</p>{email ? <a class="text-link mastering-email" href={`mailto:${email}`}>{email} <span aria-hidden="true">↗</span></a> : <p class="contact-status">Email contact is being updated.</p>}<p class="mastering-context">My practice connects audio finishing with the perspective of a performing musician.</p></aside>
+    </div>
+  </div>
+</section>
+<script>
+  const button = document.querySelector<HTMLButtonElement>('.mastering-toggle');
+  const additional = document.querySelector<HTMLElement>('#additional-mastering-works');
+  const template = document.querySelector<HTMLTemplateElement>('#additional-mastering-template');
+  if (button && additional && template) {
+    button.hidden = false;
+    button.addEventListener('click', () => {
+      const expand = button.getAttribute('aria-expanded') !== 'true';
+      if (expand) {
+        additional.append(template.content.cloneNode(true));
+        additional.hidden = false;
+      } else {
+        additional.querySelectorAll('audio').forEach(audio => audio.pause());
+        // Removing the extra iframe browsing contexts stops hidden playback.
+        additional.replaceChildren();
+        additional.hidden = true;
+      }
+      button.setAttribute('aria-expanded', String(expand));
+      button.textContent = expand ? 'SHOW LESS −' : 'VIEW ALL WORKS +';
+      // Keep keyboard focus on the control after it moves with the list.
+      button.focus({ preventScroll: true });
+      if (!expand) button.scrollIntoView({ block: 'nearest' });
+    });
+  }
+</script>

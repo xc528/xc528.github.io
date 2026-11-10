@@ -1,0 +1,16 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { researchSummaries } from '../data/research';
+import { isTechnical } from '../utils/projects';
+const projects = (await getCollection('projects')).filter(isTechnical).sort((a, b) => a.data.number - b.data.number);
+const base = import.meta.env.BASE_URL;
+---
+<Layout title="Research & Technology" description="A concise archive of Rhan Chen’s work in virtual acoustics, audio machine learning and music technology.">
+  <header class="wrap page-intro"><span class="eyebrow">A technical mind / A musician’s perspective</span><h1>Research &<br/><em>Technology.</em></h1><p>Experiments in how sound is simulated, represented and understood — alongside a creative practice in music.</p><nav class="category-nav" aria-label="Research projects">{projects.map(project => <a href={`#${project.id}`}>{project.data.title} ↓</a>)}</nav></header>
+  <div class="wrap research-archive">{projects.map((project, i) => {
+    const p = project.data;
+    const overview = researchSummaries[project.id];
+    return <article class="research-entry" id={project.id}><div class="research-entry-meta"><span class="eyebrow">0{i + 1} / {p.category}</span>{p.year && <span class="eyebrow">{p.year}</span>}</div><h2>{overview?.title || p.title}</h2><div class="research-entry-body"><figure>{p.image ? <img src={base + p.image} alt={p.alt || ''} width="1200" height="900" loading="lazy"/> : overview ? <img src={base + overview.diagram} alt={overview.alt} width="1200" height="760" loading="lazy"/> : <div class="research-art" aria-hidden="true"><span class="graphic-label">SOUND / TECHNOLOGY</span><div class="signal-lines"></div></div>}{overview && <figcaption class="eyebrow">{overview.caption}</figcaption>}</figure><div><p>{overview?.summary || p.summary}</p><p class="research-role eyebrow">{p.role}</p>{p.links.length > 0 && <div class="case-links">{p.links.map(link => <a class="text-link" href={link.url} target="_blank" rel="noopener noreferrer">{link.label} ↗</a>)}</div>}</div></div>{p.gallery.length > 0 && <div class="research-gallery">{p.gallery.map(image => <img src={base + image.src} alt={image.alt} loading="lazy" width="1200" height="900"/>)}</div>}</article>;
+  })}</div>
+</Layout>

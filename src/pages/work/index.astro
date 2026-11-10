@@ -1,0 +1,13 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { getCollection } from 'astro:content';
+import { technicalOverview } from '../../data/featured';
+import { isTechnical } from '../../utils/projects';
+const projects = [...(await getCollection('projects')).filter(project => !isTechnical(project)), technicalOverview].sort((a, b) => a.data.number - b.data.number);
+const categories = ['Music & Audio', 'Events & Creative Production', 'Research & Technology'];
+const base = import.meta.env.BASE_URL;
+---
+<Layout title="Work"><div class="wrap page-intro"><span class="eyebrow">Music & creative production</span><h1>Work in<br/><em>many frequencies.</em></h1><p>From the stage to the studio, and the people bringing it all together.</p><nav class="category-nav" aria-label="Explore the portfolio">{categories.map((c, i) => <a href={`#category-${i}`}>{c} ↓</a>)}<a href={`${base}#mastering`}>Mastering ↗</a></nav></div>
+{categories.map((category, i) => <section class="wrap work-category" id={`category-${i}`}><div class="section-heading"><h2>{category}</h2><span class="eyebrow">0{i + 1}</span></div><div class="project-grid">{projects.filter(p => p.data.category === category).map(project => <ProjectCard project={project}/>)}</div></section>)}
+</Layout>

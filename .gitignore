@@ -1,0 +1,31 @@
+# Dependencies, generated Astro output and local build caches
+node_modules/
+/dist/
+/.astro/
+/.cache/
+/.vite/
+/coverage/
+*.tsbuildinfo
+
+# Operating-system files and diagnostic logs
+.DS_Store
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Local environment values and credentials (safe templates may be committed)
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Original photo collection: keep local originals intact
+/Photos/
+
+# Local design/review screenshots, contact sheets, notes and draft backups
+/planning/
+/_local-review/
+
+# Previous About photo, no longer referenced by the website
+/public/images/pipa-magenta-stage.jpg

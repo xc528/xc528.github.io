@@ -1,2 +1,6 @@
 import { defineConfig } from 'astro/config';
-export default defineConfig({ site: process.env.SITE_URL || undefined, base: process.env.BASE_PATH || '/', trailingSlash: 'always' });
+
+export default defineConfig({
+  site: 'https://xc528.github.io',
+  trailingSlash: 'always',
+});
